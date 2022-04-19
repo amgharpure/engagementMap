@@ -3,7 +3,10 @@
     "version": "0.0.1",
     "description": "EngagementMap application",
     "dependencies": {
+        "connect-livereload": "^0.6.1",
         "express": "^4.17.3",
+        "livereload": "^0.9.3",
+        "nodemon": "^2.0.15",
         "socket.io": "^4.4.1"
     }
 }
