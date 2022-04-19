@@ -18,10 +18,11 @@
         <form class="w-full md:w-64 md:flex md:flex-col md:items-start" id="form">
             <div class="flex flex-wrap mb-6">
                 <div class="w-full px-3">
-                  <label class="block tracking-wide text-gray-700 text-xs mb-2" for="userId">
-                    User ID
-                  </label>
-                  <input required class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="userId" type="text" placeholder="0">
+                    <label class="block tracking-wide text-gray-700 text-xs mb-2" for="userId">
+                        User ID
+                    </label>
+                    <input required class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="userId" type="text" placeholder="0">
+                    <p class="text-red-500 text-xs italic hidden" id="userid-error">Please fill out this field.</p>
                 </div>
               </div>
 
@@ -116,8 +117,8 @@
     <script>
       const socket = io();
 
-      // const form = document.getElementById('form');
       const userId = document.getElementById('userId');
+      const userIdErrorMsg = document.getElementById('userid-error');
       const locationInfo = document.getElementById('location');
       const engagementLevel = document.getElementById('engagement-slider');
       const comprehensionLevel = document.getElementById('comprehensive-slider');
@@ -131,18 +132,27 @@
           }
       }
 
+      const sendFeedback = () => {
+          if (userId.value) {
+              userId.classList.remove("border-2");
+              userId.classList.remove("border-red-400");
+              userIdErrorMsg.classList.add("hidden");
+              socket.emit('feedback', JSON.stringify(getJsonFeedback()));
+          } else {
+              userId.classList.add("border-2");
+              userId.classList.add("border-red-400");
+              userIdErrorMsg.classList.remove("hidden");
+          }
+      }
+
       engagementLevel.addEventListener('input', function(e) {
           e.preventDefault();
-          console.log(getJsonFeedback())
-          socket.emit('feedback', JSON.stringify(getJsonFeedback()));
-          // if (input.value) {
-          //     socket.emit('feedback', getJsonFeedback());
-          // }
+          sendFeedback()
       });
 
       comprehensionLevel.addEventListener('input', function(e) {
           e.preventDefault();
-          socket.emit('feedback', JSON.stringify(getJsonFeedback()));
+          sendFeedback()
       });
     </script>
 
