@@ -1,3 +1,5 @@
+const data = require("./dummyData.json");
+
 const express = require('express');
 const app = express();
 const http = require('http');
@@ -27,28 +29,29 @@ app.get('/dashboard', (req, res) => {
   res.sendFile(__dirname + '/public/dashboard.html');
 });
 
-io.on('connection', (socket) => {
-    socket.broadcast.emit('hi');
+const getAggregateData = () => {
+    // FIXME: Get data from firebase, comment out line getting dummy data
+    return data
+}
 
+io.on('connection', (socket) => {
     socket.on('disconnect', () => {
       console.log('user disconnected');
     });
 
     socket.on('feedback', (msg) => {
         try {
-            msgJson = JSON.parse(msg);
+            const msgJson = JSON.parse(msg);
             console.log(msgJson);
-            userId = msgJson.id;
-            io.emit('dashboard-update', 'new feedback from '+userId);
-        }
-        catch {
+            const userId = msgJson.id;
+            io.emit('dashboard-update', getAggregateData());
+        } catch {
             console.log('Invalid JSON');
-            return;
         }
-      });
+    });
 });
 
 
 server.listen(3000, () => {
     console.log('listening on *:3000');
-  });
+});
