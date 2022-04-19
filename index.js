@@ -35,7 +35,8 @@ app.get('/dashboard', (req, res) => {
 
 io.on('connection', (socket) => {
   socket.broadcast.emit('hi');
-
+    
+  console.log('user connected');
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
@@ -57,5 +58,25 @@ io.on('connection', (socket) => {
 
 
 server.listen(3000, () => {
-  console.log('listening on *:3000');
-});
+    console.log('listening on *:3000');
+  });
+
+function getFeedbackData() {
+    const data = [
+        {
+            "id": "user1",
+            "timestamp": new Date(2022, 03, 17),
+            "comprehension": "good",
+            "engagement": "good",
+            "location": "left-back"
+        },
+        {
+            "id": "user2",
+            "timestamp": new Date(2022, 03, 17),
+            "comprehension": "bad",
+            "engagement": "excellent",
+            "location": "right-back"
+        }
+    ];
+    return data;
+}
