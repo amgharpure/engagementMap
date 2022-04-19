@@ -2,38 +2,149 @@
 <html>
   <head>
     <title>EngagementMap</title>
-    <style>
-      body { margin: 0; padding-bottom: 3rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-
-      #form { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
-      #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
-      #input:focus { outline: none; }
-      #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
-
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages > li { padding: 0.5rem 1rem; }
-      #messages > li:nth-child(odd) { background: #efefef; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="student.css">
+<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">-->
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body>
-      <h1>Student</h1>
-    <ul id="messages"></ul>
-    <form id="form" action="">
-      <input id="input" autocomplete="off" /><button>Send</button>
-    </form>
+
+  <body class="">
+    <div class="title">
+      <h1 class="text-3xl font-bold">EngagementMap</h1>
+      <h2 class="text-lg font-bold">for Students</h2>
+    </div>
+
+    <div class="w-full md:flex md:justify-center">
+        <form class="w-full md:w-64 md:flex md:flex-col md:items-start" id="form">
+            <div class="flex flex-wrap mb-6">
+                <div class="w-full px-3">
+                  <label class="block tracking-wide text-gray-700 text-xs mb-2" for="userId">
+                    User ID
+                  </label>
+                  <input required class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="userId" type="text" placeholder="0">
+                </div>
+              </div>
+
+              <div class="flex flex-wrap mb-2">
+                <div class="w-full px-3 mb-6">
+                  <label class="block tracking-wide text-gray-700 text-xs mb-2" for="location">
+                    Where are you sitting from the perspective of the professor?
+                  </label>
+                  <div class="relative">
+                    <select class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="location">
+                        <option>Front (first row)</option>
+                        <option>Left Back</option>
+                        <option>Right Back</option>
+                        <option>Zoom</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                      <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap mb-2">
+                <div class="w-full px-3 mb-6">
+                  <label class="block tracking-wide text-gray-700 text-xs mb-2" for="engagement-slider">
+                    How <span class="font-bold">engaging</span> is the lecture now?
+                  </label>
+                  <input
+                        type="range"
+                        class="form-range w-full h-6 p-0 focus:outline-none focus:ring-0 focus:shadow-none"
+                        min="-1"
+                        max="1"
+                        id="engagement-slider"
+                        list="engagement__slider__ticks"
+                    />
+                    <datalist class="slider__ticks" id="engagement__slider__ticks">
+                        <option>-1</option>
+                        <option>0</option>
+                        <option>1</option>
+                    </datalist>
+
+                    <div class="slider__label__group">
+                        <label for="engagement-slider" class="slider__label">
+                            Bad
+                        </label>
+                        <label for="engagement-slider" class="slider__label text-center">
+                            Good
+                        </label>
+                        <label for="engagement-slider" class="slider__label text-right">
+                            Awesome
+                        </label>
+                    </div>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap mb-2">
+                <div class="w-full px-3 mb-6">
+                    <label class="block tracking-wide text-gray-700 text-xs  mb-2" for="comprehensive-slider">
+                        How <span class="font-bold">comprehensive</span> is the lecture now?
+                    </label>
+                    <input
+                        type="range"
+                        class="form-range w-full h-6 p-0 focus:outline-none focus:ring-0 focus:shadow-none"
+                        min="-1"
+                        max="1"
+                        id="comprehensive-slider"
+                        list="slider__ticks"
+                    />
+                    <datalist class="slider__ticks" id="slider__ticks">
+                        <option>-1</option>
+                        <option>0</option>
+                        <option>1</option>
+                    </datalist>
+
+                    <div class="slider__label__group">
+                        <label for="comprehensive-slider" class="slider__label">
+                            Bad
+                        </label>
+                        <label for="comprehensive-slider" class="slider__label text-center">
+                            Good
+                        </label>
+                        <label for="comprehensive-slider" class="slider__label text-right">
+                            Awesome
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+      
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        var socket = io();
+      const socket = io();
 
-        var form = document.getElementById('form');
-        var input = document.getElementById('input');
+      // const form = document.getElementById('form');
+      const userId = document.getElementById('userId');
+      const locationInfo = document.getElementById('location');
+      const engagementLevel = document.getElementById('engagement-slider');
+      const comprehensionLevel = document.getElementById('comprehensive-slider');
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            if (input.value) {
-                socket.emit('feedback', input.value);
-            }
-        });
+      const getJsonFeedback = () => {
+          return {
+              "id": userId.value,
+              "location": locationInfo.value,
+              "engagement": engagementLevel.value,
+              "comprehension": comprehensionLevel.value
+          }
+      }
+
+      engagementLevel.addEventListener('input', function(e) {
+          e.preventDefault();
+          console.log(getJsonFeedback())
+          socket.emit('feedback', JSON.stringify(getJsonFeedback()));
+          // if (input.value) {
+          //     socket.emit('feedback', getJsonFeedback());
+          // }
+      });
+
+      comprehensionLevel.addEventListener('input', function(e) {
+          e.preventDefault();
+          socket.emit('feedback', JSON.stringify(getJsonFeedback()));
+      });
     </script>
+
   </body>
 </html>

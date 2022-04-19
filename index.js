@@ -13,6 +13,8 @@ liveReloadServer.watch(path.join(__dirname, 'public'));
 const connectLivereload = require("connect-livereload");
 app.use(connectLivereload());
 
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
   });
@@ -35,7 +37,7 @@ io.on('connection', (socket) => {
     socket.on('feedback', (msg) => {
         try {
             msgJson = JSON.parse(msg);
-            console.log();
+            console.log(msgJson);
             userId = msgJson.id;
             io.emit('dashboard-update', 'new feedback from '+userId);
         }
