@@ -145,6 +145,14 @@
           }
       }
 
+      userId.addEventListener("change", () => {
+          sendFeedback()
+      })
+
+      locationInfo.addEventListener("change", () => {
+          sendFeedback()
+      })
+
       engagementLevel.addEventListener('input', function(e) {
           e.preventDefault();
           sendFeedback()
