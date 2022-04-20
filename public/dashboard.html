@@ -114,6 +114,7 @@
         function setup() {
         createCanvas(screenWidth, screenHeight);
         questionImg = loadImage("https://img.icons8.com/ios-filled/100/000000/question-mark.png");
+        legendImg = loadImage("https://i.ibb.co/nBddNmv/legend.png");
 
         }
 
@@ -187,6 +188,8 @@
         drawRemoteQuestions(remoteQuestionCount);
         drawlbQuestions(lbQuestionCount);
         drawrbQuestions(rbQuestionCount);
+
+        image(legendImg, 85,10, 200, 50);
         }
     </script>
   </body>
