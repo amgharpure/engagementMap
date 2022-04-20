@@ -57,11 +57,15 @@ const getAggregateData = (data) => {
   const aggregateData = { 'front': {}, 'left-back': {}, 'right-back': {}, 'zoom': {}, 'overall': {} }
   const overall = 0
   Object.entries(locationData).forEach(([k, v]) => {
-    const engagementRatio = 0
-    const comprehensionRatio = 0
+    const engagementSum = v.reduce((prev, curr) => prev + parseFloat(curr['engagement']), 0)
+    const engagementRatio = engagementSum / v.length
+
+    const comprehensionSum = v.reduce((prev, curr) => prev + parseFloat(curr['comprehension']), 0)
+    const comprehensionRatio = comprehensionSum / v.length
+
     aggregateData[k] = {
-      'engagement': engagementRatio,
-      'comprehension': comprehensionRatio
+      'engagement': engagementRatio || 0,
+      'comprehension': comprehensionRatio || 0
     }
   })
   aggregateData['overall'] = {
