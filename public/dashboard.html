@@ -77,7 +77,7 @@
             remoteQuestionCount = getComprehensionQuestionCount(msg['zoom'].comprehension);
         });
 
-        var scalingFactor = 1.25
+        var scalingFactor = 2;
 
         var screenWidth = 640 * scalingFactor
         var screenHeight = 320 * scalingFactor
@@ -113,7 +113,7 @@
 
         function setup() {
         createCanvas(screenWidth, screenHeight);
-        questionImg = loadImage("https://img.icons8.com/ios-filled/100/000000/question-mark.png");
+        questionImg = loadImage("https://img.icons8.com/ios-glyphs/30/000000/question-mark.png");
 
         }
 
