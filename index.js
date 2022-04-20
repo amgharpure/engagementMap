@@ -1,3 +1,5 @@
+const data = require("./dummyData.json");
+
 const express = require('express');
 const app = express();
 const http = require('http')
@@ -33,50 +35,63 @@ app.get('/dashboard', (req, res) => {
   res.sendFile(__dirname + '/public/dashboard.html');
 });
 
-io.on('connection', (socket) => {
-  socket.broadcast.emit('hi');
-    
-  console.log('user connected');
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
-  });
+const getAggregateData = () => {
+    // FIXME: Get data from firebase, comment out line getting dummy data
+    // Percentage of engagement and comprehension per section and overall
+    const currentData = {}
+    data.forEach(item => {
+        if (currentData[item.id]) {
+            if (currentData[item.id]['timestamp'] > item['timestamp']) {
+                currentData[item.id] = item
+            }
+        } else {
+            currentData[item.id] = item
+        }
+    })
 
-  socket.on('feedback', async (msg) => {
-    try {
-      msgJson = JSON.parse(msg);
-      console.log(msgJson);
-      userId = msgJson.id;
-      await collection.insertOne(msgJson);
-      io.emit('dashboard-update', 'new feedback from ' + userId);
-    }
-    catch {
-      console.log('Invalid JSON');
-      return;
-    }
-  });
+    const locationData = {'front': [], 'left-back': [], 'right-back': [], 'zoom': []}
+    Object.entries(currentData).forEach(([k, v]) => {
+        locationData[v['location']].push(v)
+    })
+
+    const aggregateData = {'front': {}, 'left-back': {}, 'right-back': {}, 'zoom': {}, 'overall': {}}
+    const overall = 0
+    Object.entries(locationData).forEach(([k, v]) => {
+        const engagementRatio = 0
+        const comprehensionRatio = 0
+        aggregateData[k] = {
+            'engagement': engagementRatio,
+            'comprehension': comprehensionRatio
+        }
+    })
+    aggregateData['overall'] = {
+        'engagement': 0,
+        'comprehension': 0
+    };
+
+    console.log(locationData)
+    return aggregateData
+}
+
+io.on('connection', (socket) => {
+    socket.on('disconnect', () => {
+      console.log('user disconnected');
+    });
+
+    socket.on('feedback', async (msg) => {
+        try {
+            const msgJson = JSON.parse(msg);
+            const userId = msgJson.id;
+            await collection.insertOne(msgJson);
+            io.emit('dashboard-update', getAggregateData());
+        } catch {
+            console.log('Invalid JSON');
+        }
+    });
 });
 
 
 server.listen(3000, () => {
     console.log('listening on *:3000');
-  });
+});
 
-function getFeedbackData() {
-    const data = [
-        {
-            "id": "user1",
-            "timestamp": new Date(2022, 03, 17),
-            "comprehension": "good",
-            "engagement": "good",
-            "location": "left-back"
-        },
-        {
-            "id": "user2",
-            "timestamp": new Date(2022, 03, 17),
-            "comprehension": "bad",
-            "engagement": "excellent",
-            "location": "right-back"
-        }
-    ];
-    return data;
-}
