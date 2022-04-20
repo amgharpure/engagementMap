@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>EngagementMap</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="stylesheet" href="student.css">
-<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">-->
-    <script src="https://cdn.tailwindcss.com"></script>
-  </head>
 
-  <body class="">
+<head>
+    <title>EngagementMap</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="student.css">
+    <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">-->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="">
     <div class="title">
-      <h1 class="text-3xl font-bold">EngagementMap</h1>
-      <h2 class="text-lg font-bold">for Students</h2>
+        <h1 class="text-3xl font-bold">EngagementMap</h1>
+        <h2 class="text-lg font-bold">for Students</h2>
     </div>
 
     <div class="w-full md:flex md:justify-center">
@@ -21,12 +22,14 @@
                     <label class="block tracking-wide text-gray-700 text-xs mb-2" for="userId">
                         User ID
                     </label>
-                    <input required class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="userId" type="text" placeholder="0">
+                    <input required
+                        class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                        id="userId" type="text" placeholder="0">
                     <p class="text-red-500 text-xs italic hidden" id="userid-error">Please fill out this field.</p>
                 </div>
-              </div>
+            </div>
 
-              <div class="flex flex-wrap mb-2">
+            <div class="flex flex-wrap mb-2">
                 <div class="w-full px-3 mb-6">
                   <label class="block tracking-wide text-gray-700 text-xs mb-2" for="location">
                     Where are you sitting from the perspective of the professor?
@@ -43,21 +46,16 @@
                     </div>
                   </div>
                 </div>
-              </div>
+            </div>
 
-              <div class="flex flex-wrap mb-2">
+            <div class="flex flex-wrap mb-2">
                 <div class="w-full px-3 mb-6">
-                  <label class="block tracking-wide text-gray-700 text-xs mb-2" for="engagement-slider">
-                    How <span class="font-bold">engaging</span> is the lecture now?
-                  </label>
-                  <input
-                        type="range"
-                        class="form-range w-full h-6 p-0 focus:outline-none focus:ring-0 focus:shadow-none"
-                        min="-1"
-                        max="1"
-                        id="engagement-slider"
-                        list="engagement__slider__ticks"
-                    />
+                    <label class="block tracking-wide text-gray-700 text-xs mb-2" for="engagement-slider">
+                        How <span class="font-bold">engaging</span> is the lecture now?
+                    </label>
+                    <input type="range"
+                        class="form-range w-full h-6 p-0 focus:outline-none focus:ring-0 focus:shadow-none" min="-1"
+                        max="1" id="engagement-slider" list="engagement__slider__ticks" />
                     <datalist class="slider__ticks" id="engagement__slider__ticks">
                         <option>-1</option>
                         <option>0</option>
@@ -76,21 +74,16 @@
                         </label>
                     </div>
                 </div>
-              </div>
+            </div>
 
-              <div class="flex flex-wrap mb-2">
+            <div class="flex flex-wrap mb-2">
                 <div class="w-full px-3 mb-6">
                     <label class="block tracking-wide text-gray-700 text-xs  mb-2" for="comprehensive-slider">
                         How <span class="font-bold">comprehensive</span> is the lecture now?
                     </label>
-                    <input
-                        type="range"
-                        class="form-range w-full h-6 p-0 focus:outline-none focus:ring-0 focus:shadow-none"
-                        min="-1"
-                        max="1"
-                        id="comprehensive-slider"
-                        list="slider__ticks"
-                    />
+                    <input type="range"
+                        class="form-range w-full h-6 p-0 focus:outline-none focus:ring-0 focus:shadow-none" min="-1"
+                        max="1" id="comprehensive-slider" list="slider__ticks" />
                     <datalist class="slider__ticks" id="slider__ticks">
                         <option>-1</option>
                         <option>0</option>
@@ -112,57 +105,59 @@
             </div>
         </form>
     </div>
-      
+
     <script src="/socket.io/socket.io.js"></script>
     <script>
-      const socket = io();
+        const socket = io();
 
-      const userId = document.getElementById('userId');
-      const userIdErrorMsg = document.getElementById('userid-error');
-      const locationInfo = document.getElementById('location');
-      const engagementLevel = document.getElementById('engagement-slider');
-      const comprehensionLevel = document.getElementById('comprehensive-slider');
+        const userId = document.getElementById('userId');
+        const userIdErrorMsg = document.getElementById('userid-error');
+        const locationInfo = document.getElementById('location');
+        const engagementLevel = document.getElementById('engagement-slider');
+        const comprehensionLevel = document.getElementById('comprehensive-slider');
 
-      const getJsonFeedback = () => {
-          return {
-              "id": userId.value,
-              "location": locationInfo.value,
-              "engagement": engagementLevel.value,
-              "comprehension": comprehensionLevel.value
-          }
-      }
+        const getJsonFeedback = () => {
+            return {
+                "id": userId.value,
+                "timestamp": Date.now().toString(),
+                "location": locationInfo.value,
+                "engagement": engagementLevel.value,
+                "comprehension": comprehensionLevel.value
+            }
+        }
 
-      const sendFeedback = () => {
-          if (userId.value) {
-              userId.classList.remove("border-2");
-              userId.classList.remove("border-red-400");
-              userIdErrorMsg.classList.add("hidden");
-              socket.emit('feedback', JSON.stringify(getJsonFeedback()));
-          } else {
-              userId.classList.add("border-2");
-              userId.classList.add("border-red-400");
-              userIdErrorMsg.classList.remove("hidden");
-          }
-      }
+        const sendFeedback = () => {
+            if (userId.value) {
+                userId.classList.remove("border-2");
+                userId.classList.remove("border-red-400");
+                userIdErrorMsg.classList.add("hidden");
+                socket.emit('feedback', JSON.stringify(getJsonFeedback()));
+            } else {
+                userId.classList.add("border-2");
+                userId.classList.add("border-red-400");
+                userIdErrorMsg.classList.remove("hidden");
+            }
+        }
 
-      userId.addEventListener("change", () => {
-          sendFeedback()
-      })
+        userId.addEventListener("change", () => {
+            sendFeedback()
+        })
 
-      locationInfo.addEventListener("change", () => {
-          sendFeedback()
-      })
+        locationInfo.addEventListener("change", () => {
+            sendFeedback()
+        })
 
-      engagementLevel.addEventListener('input', function(e) {
-          e.preventDefault();
-          sendFeedback()
-      });
+        engagementLevel.addEventListener('input', function (e) {
+            e.preventDefault();
+            sendFeedback()
+        });
 
-      comprehensionLevel.addEventListener('input', function(e) {
-          e.preventDefault();
-          sendFeedback()
-      });
+        comprehensionLevel.addEventListener('input', function (e) {
+            e.preventDefault();
+            sendFeedback()
+        });
     </script>
 
-  </body>
+</body>
+
 </html>

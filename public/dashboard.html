@@ -1,35 +1,140 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>EngagementMap</title>
-    <style>
-      body { margin: 0; padding-bottom: 3rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta charset="utf-8" />
 
-      #form { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
-      #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
-      #input:focus { outline: none; }
-      #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
-
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages > li { padding: 0.5rem 1rem; }
-      #messages > li:nth-child(odd) { background: #efefef; }
-    </style>
   </head>
   <body>
-      <h1>Dashbaord</h1>
-      <ul id="messages"></ul>
+      <h1>EngagementMap</h1>
+    <main>
+    </main>
     <script src="/socket.io/socket.io.js"></script>
     <script>
+
         var socket = io();
-
         socket.on('dashboard-update', function(msg) {
-            var item = document.createElement('li');
-            item.textContent = msg;
-            messages.appendChild(item);
-            window.scrollTo(0, document.body.scrollHeight);
+            console.log('dashboard-update'+JSON.stringify(msg));
         });
-        
 
+        var scalingFactor = 1.25
+
+        var screenWidth = 640 * scalingFactor
+        var screenHeight = 320 * scalingFactor
+
+        var frontWidth = 500 * scalingFactor
+        var frontHeight = 50 * scalingFactor
+        var frontX = (screenWidth - frontWidth)/2
+        var frontY = 150 * scalingFactor
+
+        var remoteWidth = 500 * scalingFactor
+        var remoteHeight = 50 * scalingFactor
+        var remoteX = (screenWidth - remoteWidth)/2
+        var remoteY = 260 * scalingFactor
+
+        var lbWidth = 240 * scalingFactor
+        var lbHeight = 75 * scalingFactor
+        var lbX = (screenWidth - frontWidth)/2
+        var lbY = 60 * scalingFactor
+
+        var rbWidth = 240 * scalingFactor
+        var rbHeight = 75 * scalingFactor
+        var rbX = (screenWidth - (screenWidth - frontWidth)/2 - rbWidth)
+        var rbY = 60 * scalingFactor
+
+        var instructorWidth = 220 * scalingFactor
+        var instructorHeight = 8 * scalingFactor
+        var instructorX = (screenWidth - instructorWidth)/2
+        var instructorY = 240 * scalingFactor
+
+        var frontColor = '#c1fa96'
+        var lbColor = '#fade96'
+        var rbColor = '#ff917a'
+        var remoteColor = '#fade96'
+
+
+        var questionImg = null;
+        var questionSize = 30 * scalingFactor;
+
+        function setup() {
+        createCanvas(screenWidth, screenHeight);
+        questionImg = loadImage('https://img.icons8.com/ios-glyphs/90/ffffff/question-mark.png');
+
+        }
+
+        function drawFrontQuestions(qty) {
+        if (qty > 0) {
+            image(questionImg, (frontX+164*scalingFactor),(frontY+10*scalingFactor), questionSize, questionSize);
+        }
+        if (qty > 1) {
+            image(questionImg, (frontX+200*scalingFactor),(frontY+5*scalingFactor), questionSize, questionSize);
+        }
+        if (qty > 2) {
+            image(questionImg, (frontX+300*scalingFactor),(frontY+15*scalingFactor), questionSize, questionSize);
+        }
+        }
+
+        function drawRemoteQuestions(qty) {
+        if (qty > 0) {
+            image(questionImg, (remoteX+164*scalingFactor),(remoteY+10*scalingFactor), questionSize, questionSize);
+        }
+        if (qty > 1) {
+            image(questionImg, (remoteX+200*scalingFactor),(remoteY+5*scalingFactor), questionSize, questionSize);
+        }
+        if (qty > 2) {
+            image(questionImg, (remoteX+300*scalingFactor),(remoteY+15*scalingFactor), questionSize, questionSize);
+        }
+        }
+
+        function drawlbQuestions(qty) {
+        if (qty > 0) {
+            image(questionImg, (lbX+64*scalingFactor),(lbY+10*scalingFactor), questionSize, questionSize);
+        }
+        if (qty > 1) {
+            image(questionImg, (lbX+100*scalingFactor),(lbY+25*scalingFactor), questionSize, questionSize);
+        }
+        if (qty > 2) {
+            image(questionImg, (lbX+150*scalingFactor),(lbY+15*scalingFactor), questionSize, questionSize);
+        }
+        }
+
+        function drawrbQuestions(qty) {
+        if (qty > 0) {
+            image(questionImg, (rbX+64*scalingFactor),(rbY+10*scalingFactor), questionSize, questionSize);
+        }
+        if (qty > 1) {
+            image(questionImg, (rbX+100*scalingFactor),(rbY+25*scalingFactor), questionSize, questionSize);
+        }
+        if (qty > 2) {
+            image(questionImg, (rbX+150*scalingFactor),(rbY+15*scalingFactor), questionSize, questionSize);
+        }
+        }
+
+        function draw() {
+        background(220);
+        
+        fill(frontColor);
+        rect(frontX, frontY, frontWidth, frontHeight);
+        
+        fill(remoteColor);
+        rect(remoteX, remoteY, remoteWidth, remoteHeight);
+        
+        fill(lbColor);
+        rect(lbX, lbY, lbWidth, lbHeight);
+        
+        fill(rbColor);
+        rect(rbX, rbY, rbWidth, rbHeight);
+        
+        fill(120);
+        rect(instructorX, instructorY, instructorWidth, instructorHeight);
+        
+        drawFrontQuestions(0);
+        drawRemoteQuestions(3);
+        drawlbQuestions(02);
+        drawrbQuestions(3);
+        }
     </script>
   </body>
 </html>

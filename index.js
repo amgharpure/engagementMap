@@ -2,10 +2,16 @@ const data = require("./dummyData.json");
 
 const express = require('express');
 const app = express();
-const http = require('http');
+const http = require('http')
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
+
+// MongoDB
+const { MongoClient } = require("mongodb");
+const client = new MongoClient("mongodb+srv://test:test@cluster0.qynhu.mongodb.net/Cluster0?retryWrites=true&w=majority");
+client.connect();
+collection = client.db("engagementMapDB").collection("feedback");
 
 // For frontend hot reloading
 const livereload = require("livereload");
@@ -18,11 +24,11 @@ app.use(connectLivereload());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/public/index.html');
-  });
+  res.sendFile(__dirname + '/public/index.html');
+});
 
 app.get('/student', (req, res) => {
-    res.sendFile(__dirname + '/public/student.html');
+  res.sendFile(__dirname + '/public/student.html');
 });
 
 app.get('/dashboard', (req, res) => {
@@ -72,10 +78,11 @@ io.on('connection', (socket) => {
       console.log('user disconnected');
     });
 
-    socket.on('feedback', (msg) => {
+    socket.on('feedback', async (msg) => {
         try {
             const msgJson = JSON.parse(msg);
             const userId = msgJson.id;
+            await collection.insertOne(msgJson);
             io.emit('dashboard-update', getAggregateData());
         } catch {
             console.log('Invalid JSON');
@@ -87,3 +94,4 @@ io.on('connection', (socket) => {
 server.listen(3000, () => {
     console.log('listening on *:3000');
 });
+
