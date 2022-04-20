@@ -16,8 +16,6 @@ const client = new MongoClient("mongodb+srv://test:test@cluster0.qynhu.mongodb.n
 client.connect();
 collection = client.db("engagementMapDB").collection("feedback");
 
-const path = require("path");
-
 // For frontend hot reloading
 if (process.env.NODE_ENV !== 'production') {
     const livereload = require("livereload");
