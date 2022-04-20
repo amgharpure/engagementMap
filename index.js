@@ -40,9 +40,9 @@ const getAggregateData = (data) => {
   const currentData = {}
   data.forEach(item => {
     if (currentData[item.id]) {
-      // if (currentData[item.id]['timestamp'] > item['timestamp']) {
-      currentData[item.id] = item
-      // }
+      if (parseInt(currentData[item.id]['timestamp']) > parseInt(item['timestamp'])) {
+        currentData[item.id] = item
+      }
     } else {
       currentData[item.id] = item
     }
