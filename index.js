@@ -31,7 +31,40 @@ app.get('/dashboard', (req, res) => {
 
 const getAggregateData = () => {
     // FIXME: Get data from firebase, comment out line getting dummy data
-    return data
+    // Percentage of engagement and comprehension per section and overall
+    const currentData = {}
+    data.forEach(item => {
+        if (currentData[item.id]) {
+            if (currentData[item.id]['timestamp'] > item['timestamp']) {
+                currentData[item.id] = item
+            }
+        } else {
+            currentData[item.id] = item
+        }
+    })
+
+    const locationData = {'front': [], 'left-back': [], 'right-back': [], 'zoom': []}
+    Object.entries(currentData).forEach(([k, v]) => {
+        locationData[v['location']].push(v)
+    })
+
+    const aggregateData = {'front': {}, 'left-back': {}, 'right-back': {}, 'zoom': {}, 'overall': {}}
+    const overall = 0
+    Object.entries(locationData).forEach(([k, v]) => {
+        const engagementRatio = 0
+        const comprehensionRatio = 0
+        aggregateData[k] = {
+            'engagement': engagementRatio,
+            'comprehension': comprehensionRatio
+        }
+    })
+    aggregateData['overall'] = {
+        'engagement': 0,
+        'comprehension': 0
+    };
+
+    console.log(locationData)
+    return aggregateData
 }
 
 io.on('connection', (socket) => {
@@ -42,7 +75,6 @@ io.on('connection', (socket) => {
     socket.on('feedback', (msg) => {
         try {
             const msgJson = JSON.parse(msg);
-            console.log(msgJson);
             const userId = msgJson.id;
             io.emit('dashboard-update', getAggregateData());
         } catch {
