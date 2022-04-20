@@ -70,6 +70,7 @@ const getAggregateData = (data) => {
   };
 
   console.log(locationData)
+  console.log(aggregateData)
   return aggregateData
 }
 
