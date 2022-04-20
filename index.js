@@ -9,17 +9,23 @@ const io = new Server(server);
 
 // MongoDB
 const { MongoClient } = require("mongodb");
+const livereload = require("livereload");
+const path = require("path");
+const connectLivereload = require("connect-livereload");
 const client = new MongoClient("mongodb+srv://test:test@cluster0.qynhu.mongodb.net/Cluster0?retryWrites=true&w=majority");
 client.connect();
 collection = client.db("engagementMapDB").collection("feedback");
 
-// For frontend hot reloading
-const livereload = require("livereload");
-const liveReloadServer = livereload.createServer();
 const path = require("path");
-liveReloadServer.watch(path.join(__dirname, 'public'));
-const connectLivereload = require("connect-livereload");
-app.use(connectLivereload());
+
+// For frontend hot reloading
+if (process.env.NODE_ENV !== 'production') {
+    const livereload = require("livereload");
+    const liveReloadServer = livereload.createServer();
+    liveReloadServer.watch(path.join(__dirname, 'public'));
+    const connectLivereload = require("connect-livereload");
+    app.use(connectLivereload());
+}
 
 app.use(express.static(path.join(__dirname, 'public')));
 
