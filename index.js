@@ -1,4 +1,4 @@
-const data = require("./dummyData.json");
+// var data = [require("./dummyData.json")];
 
 const express = require('express');
 const app = express();
@@ -35,63 +35,64 @@ app.get('/dashboard', (req, res) => {
   res.sendFile(__dirname + '/public/dashboard.html');
 });
 
-const getAggregateData = () => {
-    // FIXME: Get data from firebase, comment out line getting dummy data
-    // Percentage of engagement and comprehension per section and overall
-    const currentData = {}
-    data.forEach(item => {
-        if (currentData[item.id]) {
-            if (currentData[item.id]['timestamp'] > item['timestamp']) {
-                currentData[item.id] = item
-            }
-        } else {
-            currentData[item.id] = item
-        }
-    })
+const getAggregateData = (data) => {
+  // Percentage of engagement and comprehension per section and overall
+  const currentData = {}
+  data.forEach(item => {
+    if (currentData[item.id]) {
+      // if (currentData[item.id]['timestamp'] > item['timestamp']) {
+      currentData[item.id] = item
+      // }
+    } else {
+      currentData[item.id] = item
+    }
+  })
 
-    const locationData = {'front': [], 'left-back': [], 'right-back': [], 'zoom': []}
-    Object.entries(currentData).forEach(([k, v]) => {
-        locationData[v['location']].push(v)
-    })
+  const locationData = { 'front': [], 'left-back': [], 'right-back': [], 'zoom': [] }
+  Object.entries(currentData).forEach(([k, v]) => {
+    console.log(v);
+    locationData[v['location']].push(v)
+  })
 
-    const aggregateData = {'front': {}, 'left-back': {}, 'right-back': {}, 'zoom': {}, 'overall': {}}
-    const overall = 0
-    Object.entries(locationData).forEach(([k, v]) => {
-        const engagementRatio = 0
-        const comprehensionRatio = 0
-        aggregateData[k] = {
-            'engagement': engagementRatio,
-            'comprehension': comprehensionRatio
-        }
-    })
-    aggregateData['overall'] = {
-        'engagement': 0,
-        'comprehension': 0
-    };
+  const aggregateData = { 'front': {}, 'left-back': {}, 'right-back': {}, 'zoom': {}, 'overall': {} }
+  const overall = 0
+  Object.entries(locationData).forEach(([k, v]) => {
+    const engagementRatio = 0
+    const comprehensionRatio = 0
+    aggregateData[k] = {
+      'engagement': engagementRatio,
+      'comprehension': comprehensionRatio
+    }
+  })
+  aggregateData['overall'] = {
+    'engagement': 0,
+    'comprehension': 0
+  };
 
-    console.log(locationData)
-    return aggregateData
+  console.log(locationData)
+  return aggregateData
 }
 
 io.on('connection', (socket) => {
-    socket.on('disconnect', () => {
-      console.log('user disconnected');
-    });
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
 
-    socket.on('feedback', async (msg) => {
-        try {
-            const msgJson = JSON.parse(msg);
-            const userId = msgJson.id;
-            await collection.insertOne(msgJson);
-            io.emit('dashboard-update', getAggregateData());
-        } catch {
-            console.log('Invalid JSON');
-        }
-    });
+  socket.on('feedback', async (msg) => {
+    try {
+      const msgJson = JSON.parse(msg);
+      const userId = msgJson.id;
+      await collection.insertOne(msgJson);
+      const data = await collection.find({}).toArray();
+      io.emit('dashboard-update', getAggregateData(data));
+    } catch {
+      console.log('Invalid JSON');
+    }
+  });
 });
 
 
 server.listen(3000, () => {
-    console.log('listening on *:3000');
+  console.log('listening on *:3000');
 });
 
