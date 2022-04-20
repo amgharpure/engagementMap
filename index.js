@@ -50,7 +50,7 @@ const getAggregateData = (data) => {
 
   const locationData = { 'front': [], 'left-back': [], 'right-back': [], 'zoom': [] }
   Object.entries(currentData).forEach(([k, v]) => {
-    console.log(v);
+    if (v['comprehension'] == '1') v['comprehension'] = '0.34';
     locationData[v['location']].push(v)
   })
 
