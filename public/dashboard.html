@@ -18,7 +18,7 @@
 
         var colorRed = "#ffcccc";
         var colorGreen = "#ccffcc";
-        var colorDarkGreen = "#ccffcc";
+        var colorDarkGreen = "#669900";
 
         var frontColor = colorGreen;
         var lbColor = colorGreen;
@@ -46,13 +46,13 @@
 
         function getComprehensionQuestionCount(val) {
             var questionCount;
-            if (val < 0.05) {
+            if (val > -0.05) {
                 questionCount = 0;
             }
-            else if (val < 0.15) {
+            else if (val > -0.25) {
                 questionCount = 1;
             }
-            else if (val < 0.25) {
+            else if (val > -0.50) {
                 questionCount = 2;
             }
             else {
@@ -72,9 +72,9 @@
             remoteColor = getEngagementColor(msg['zoom'].engagement);
 
             frontQuestionCount = getComprehensionQuestionCount(msg['front'].comprehension);
-            lbQuestionCount = getComprehensionQuestionCount(msg['left-back']).comprehension;
-            rbQuestionCount = getComprehensionQuestionCount(msg['right-back']).comprehension;
-            remoteQuestionCount = getComprehensionQuestionCount(msg['zoom']).comprehension;
+            lbQuestionCount = getComprehensionQuestionCount(msg['left-back'].comprehension);
+            rbQuestionCount = getComprehensionQuestionCount(msg['right-back'].comprehension);
+            remoteQuestionCount = getComprehensionQuestionCount(msg['zoom'].comprehension);
         });
 
         var scalingFactor = 1.25
@@ -113,7 +113,7 @@
 
         function setup() {
         createCanvas(screenWidth, screenHeight);
-        questionImg = loadImage('https://img.icons8.com/ios-glyphs/90/ffffff/question-mark.png');
+        questionImg = loadImage("https://img.icons8.com/ios-filled/100/000000/question-mark.png");
 
         }
 
@@ -184,9 +184,9 @@
         rect(instructorX, instructorY, instructorWidth, instructorHeight);
         
         drawFrontQuestions(frontQuestionCount);
-        drawRemoteQuestions(lbQuestionCount);
-        drawlbQuestions(rbQuestionCount);
-        drawrbQuestions(remoteQuestionCount);
+        drawRemoteQuestions(remoteQuestionCount);
+        drawlbQuestions(lbQuestionCount);
+        drawrbQuestions(rbQuestionCount);
         }
     </script>
   </body>
